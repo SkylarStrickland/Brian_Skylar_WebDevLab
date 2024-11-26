@@ -1,119 +1,72 @@
 import google.generativeai as genai
-import requests
+import requests as r
 import streamlit as st
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
-from difflib import get_close_matches
 
 genai.configure(api_key="AIzaSyB45quDtyWzRw_ErsU-fxsv_kmytrHLyNM")
 
-DISNEY_API_URL = "http://api.disneyapi.dev/characters"
+DISNEY_API_URL = "https://api.disneyapi.dev/character"
 
-# Set up retry logic for requests
-session = requests.Session()
-retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
-session.mount("http://", HTTPAdapter(max_retries=retries))
+# Sidebar Inputs
+st.sidebar.title("Filter Your Disney Character")
+movie_filter = st.sidebar.text_input("Enter your favorite Disney movie:")
+num_films = st.sidebar.slider("Minimum number of films:", 1, 10, 1)
+has_allies = st.sidebar.radio("Does the character have allies?", ["No", "Yes"])
 
-def fetch_disney_characters(page=1, page_size=50, filters=None):
+# Header
+st.title("Disney Character Explorer")
+st.write("---")
+
+# Fetch and Filter API Data
+aDict = {}
+def fetch_and_filter_characters():
     try:
-        response = session.get(f"{DISNEY_API_URL}?page={page}&pageSize={page_size}")
-        response.raise_for_status()
-        data = response.json()
-        if filters:
-            filtered_data = []
-            for char in data.get("data", []):
-                if filters.get("film") and filters["film"].lower() in [f.lower() for f in char.get("films", [])]:
-                    filtered_data.append(char)
-                elif filters.get("tv_show") and filters["tv_show"].lower() in [t.lower() for t in char.get("tvShows", [])]:
-                    filtered_data.append(char)
-            return {"data": filtered_data, "info": data.get("info", {})}
-        return data
-    except requests.exceptions.RequestException as e:
-        return {"error": f"Failed to fetch data: {e}"}
+        response = r.get(f"{DISNEY_API_URL}?films={movie_filter.replace(' ', '%20')}").json()
+        for char in response["data"]:
+            num_films_appearances = len(char.get("films", []))
+            has_allies_check = len(char.get("allies", [])) > 0
 
-def fetch_filtered_characters(filters=None):
-    characters = []
-    page = 1
-    while True:
-        data = fetch_disney_characters(page=page, page_size=50, filters=filters)
-        if "error" in data:
-            st.error(data["error"])
-            return []  # Return an empty list if API fetch fails
-        characters.extend(data.get("data", []))
-        if not data.get("info", {}).get("nextPage"):
-            break
-        page += 1
-    return characters
+            if has_allies == "No" and not has_allies_check and num_films_appearances >= num_films:
+                aDict[char["name"]] = (char["films"], char["imageUrl"])
+            elif has_allies == "Yes" and has_allies_check and num_films_appearances >= num_films:
+                aDict[char["name"]] = (char["films"], char["imageUrl"])
+    except Exception as e:
+        st.error(f"Failed to fetch data: {e}")
 
-def get_character_details(name, filters=None):
-    all_characters = fetch_filtered_characters(filters)
-    # Find exact or close matches
-    character_names = [char["name"] for char in all_characters]
-    match = get_close_matches(name, character_names, n=1, cutoff=0.6)
-    if match:
-        for char in all_characters:
-            if char["name"] == match[0]:
-                return char
-    return None
+# Display Data
+if movie_filter:
+    fetch_and_filter_characters()
+    if not aDict:
+        st.write("No characters match your filters. Try adjusting them.")
+    else:
+        for name, (films, img_url) in aDict.items():
+            st.header(f"Character: {name}")
+            st.image(img_url, width=300)
+            st.subheader("Films:")
+            st.write(", ".join(films) or "None")
+            st.write("---")
+else:
+    st.write("Enter a movie to start filtering.")
 
-def generate_specialized_text(character_data):
+# Specialized Content Generation
+st.subheader("Generate a Character Biography")
+selected_character = st.selectbox("Select a character to generate their biography:", list(aDict.keys()))
+if selected_character:
     try:
         model = genai.GenerativeModel("gemini-1.5-flash")
-        prompt = (
-            f"Write a detailed biography for the Disney character {character_data['name']}, "
-            f"including their appearances in films, TV shows, and video games: {character_data}."
-        )
+        character_data = aDict[selected_character]
+        prompt = f"Write a detailed biography for the Disney character {selected_character}, based on the films: {', '.join(character_data[0])}."
         response = model.generate_content(prompt)
-        return response.text
+        st.write(response.text)
     except Exception as e:
-        return f"Error generating specialized text: {e}"
+        st.error(f"Error generating biography: {e}")
 
-st.title("Disney Character Explorer")
-
-# Step 1: Ask for filters to narrow the search space
-st.subheader("Filter Options (Optional)")
-film_filter = st.text_input("Enter a film name (optional):")
-tv_filter = st.text_input("Enter a TV show name (optional):")
-
-filters = {}
-if film_filter:
-    filters["film"] = film_filter
-if tv_filter:
-    filters["tv_show"] = tv_filter
-
-character_name = st.text_input("Enter a Disney character's name:")
-
-explore_option = st.selectbox(
-    "What do you want to know?",
-    ["Biography", "Films", "TV Shows", "Video Games"],
-)
-
-if character_name:
-    character = get_character_details(character_name, filters)
-
-    if not character:
-        st.error(f"Character '{character_name}' not found with the provided filters.")
-    else:
-        st.success(f"Character found: {character['name']}")
-        
-        if explore_option == "Biography":
-            bio = generate_specialized_text(character)
-            st.subheader(f"Biography of {character['name']}:")
-            st.write(bio)
-        else:
-            category_data = character.get(explore_option.lower(), [])
-            if category_data:
-                st.subheader(f"{explore_option} for {character['name']}:")
-                st.write(", ".join(category_data))
-            else:
-                st.warning(f"No {explore_option.lower()} found for {character['name']}.")
-
+# Chatbot Interaction
 st.subheader("Chatbot Interaction")
 query = st.text_input("Ask a question about the character:")
-if query and character_name and character:
+if query and selected_character:
     try:
         model = genai.GenerativeModel("gemini-1.5-flash")
-        prompt = f"Answer the following question about the Disney character {character['name']}: {query}."
+        prompt = f"Answer the following question about the Disney character {selected_character}: {query}."
         chatbot_response = model.generate_content(prompt)
         st.write(chatbot_response.text)
     except Exception as e:
