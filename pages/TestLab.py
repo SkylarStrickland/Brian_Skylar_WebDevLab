@@ -13,7 +13,7 @@ session = requests.Session()
 retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
 session.mount("http://", HTTPAdapter(max_retries=retries))
 
-def fetch_disney_characters(page=1, page_size=10):
+def fetch_disney_characters(page=1, page_size=infty):
     try:
         response = session.get(f"{DISNEY_API_URL}?page={page}&pageSize={page_size}")
         response.raise_for_status()
