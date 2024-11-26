@@ -28,17 +28,18 @@ course_data = {
     "code":["CS 1301", "MATH 1551", "MATH 1554", "GT 1000", "ENGL 1101"], 
     "names":["Intro to CS", "Differential Calculus", "Linear Algebra", "First-Year Seminar", "English Composition 1"], 
     "semester_taken":["1st", "1st", "1st", "1st", "1st"],
-    "skills":["Coding in python and understanding how to think like a programer", "Taking the derivative of a function", "Understanding and using matricies to understand data", "Understanding Georgia Tech as a first year", "Writing complex essays using rhetorical skills"],
+    "skills":["Coding in python and understanding how to think like a programmer", "Taking the derivative of a function", "Understanding and using matricies to understand data", "Understanding Georgia Tech as a first year", "Writing complex essays using rhetorical skills"],
     }
 experience_data = {
     "Cashier at WNB Factory": (["- Helped customers with their orders",
-                                                                          "- Maintained a clean eating enviornment", "- Restocked Condiments"],"Images/WNB.jpg"),
+                                                                          "- Maintained a clean eating environment", "- Restocked Condiments"],"Images/WNB.jpg"),
     
 }
 
 projects_data = {
     "Duchenne Muscular Dystrophy Hand Gadget": "Created a gadget to build motor skills and hand muscles for those with DMD",
-    "hi": "jo"
+    "Web Development Lab 03": "Created an app that shows my and my partner's portfolios, finds a Disney character based on user inputs, and takes in a Disney show to allow users to pick a character from the show and ask any questions about it via a chat"
+
 }
 
 programming_data = {
