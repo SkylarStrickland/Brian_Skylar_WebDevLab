@@ -16,37 +16,43 @@ import streamlit as st
 # else:
 #   st.write(response.text)
 
-import google.generativeai as genai
 import streamlit as st
+import google.generativeai as genai
 
-# Configure the API key
+# Configure the Gemini API key
 genai.configure(api_key="AIzaSyB45quDtyWzRw_ErsU-fxsv_kmytrHLyNM")
 model = genai.GenerativeModel("gemini-1.5-flash")
 
+# App title and description
+st.title("💬 Google Gemini Chatbot")
+st.write(
+    "This chatbot uses Google's Gemini AI model to generate responses. "
+    "To use this app, simply type your message below."
+)
+
 # Initialize session state to store chat history
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-# App title
-st.title("Character Background Generator")
+# Display existing messages in the chat history
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-# Input field for the user's character prompt
-character = st.text_input("Enter a character to generate their background:")
+# Input field for user prompt
+if prompt := st.chat_input("Enter your message here:"):
+    # Store and display the user's message
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-# Generate response and update chat history
-if st.button("Generate Background"):
-    if character:
-        # Call the model to generate a response
-        response = model.generate_content(f"Give me the background of {character}")
-        # Add input and response to chat history
-        st.session_state.chat_history.append({"question": character, "response": response.text})
-    else:
-        st.warning("Please enter a character.")
+    # Generate response from Google Gemini
+    with st.chat_message("assistant"):
+        response = model.generate_content(prompt)
+        st.markdown(response.text)
 
-# Display chat history
-for chat in st.session_state.chat_history:
-    st.markdown(f"**You:** {chat['question']}")
-    st.markdown(f"**Gemini:** {chat['response']}")
+    # Store the assistant's response in session state
+    st.session_state.messages.append({"role": "assistant", "content": response.text})
 
 
 
