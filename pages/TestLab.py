@@ -14,12 +14,22 @@ def fetch_disney_characters(page=1, page_size=10):
     except requests.exceptions.RequestException as e:
         return {"error": f"Failed to fetch data: {e}"}
 
+def fetch_all_characters():
+    characters = []
+    page = 1
+    while True:
+        data = fetch_disney_characters(page=page, page_size=50)
+        if "error" in data or not data.get("data"):
+            break
+        characters.extend(data["data"])
+        if not data.get("info", {}).get("nextPage"):
+            break
+        page += 1
+    return characters
+
 def get_character_details(name):
-    data = fetch_disney_characters()
-    if "error" in data:
-        return data["error"]
-    characters = data.get("data", [])
-    for char in characters:
+    all_characters = fetch_all_characters()
+    for char in all_characters:
         if char["name"].lower() == name.lower():
             return char
     return None
@@ -48,7 +58,7 @@ explore_option = st.selectbox(
 if character_name:
     character = get_character_details(character_name)
 
-    if not character:
+    if not isinstance(character, dict):
         st.error(f"Character '{character_name}' not found.")
     else:
         st.success(f"Character found: {character['name']}")
@@ -67,7 +77,7 @@ if character_name:
 
 st.subheader("Chatbot Interaction")
 query = st.text_input("Ask a question about the character:")
-if query and character_name and character:
+if query and character_name and isinstance(character, dict):
     try:
         model = genai.GenerativeModel("gemini-1.5-flash")
         prompt = f"Answer the following question about the Disney character {character['name']}: {query}."
