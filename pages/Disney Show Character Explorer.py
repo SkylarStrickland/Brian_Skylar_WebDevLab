@@ -40,7 +40,6 @@ def fetch_and_filter_characters():
     except Exception as e:
         st.error(f"Failed to fetch data: {e}")
 
-# Display Data
 if tv_show_filter:
     fetch_and_filter_characters()
     if not aDict:
@@ -62,7 +61,7 @@ else:
     st.write("Enter a TV show to start filtering.")
     selected_character = None
 
-# Specialized Content Generation
+
 if selected_character:
     st.subheader("Character Biography–don't forget to ask questions at the end!")
     try:
@@ -77,7 +76,6 @@ if selected_character:
     except Exception as e:
         st.error(f"Error generating biography: {e}")
 
-# Chatbot Interaction
 if selected_character:
     st.subheader("Chatbot Interaction")
     query = st.text_input("Ask a question about the character:")
