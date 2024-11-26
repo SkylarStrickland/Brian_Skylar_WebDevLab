@@ -52,7 +52,7 @@ else:
         movieUrl = baseUrl + f"?films={movie}"
         getData(movieUrl)
         if aDict == {}:
-            st.write("bruh u got nothing")
+            st.write("There are no characters that match your description! Try something else!")
 
         for name, (listFilms, imgUrl) in aDict.items():
             st.header(f"Your Disney Character is {name}")
@@ -60,5 +60,5 @@ else:
             st.write("---")
 
     except: # if retrieving data from getData() results in an error
-        st.write("so it actually didn't work and you got nothing")
+        st.write("Write something in!")
 
