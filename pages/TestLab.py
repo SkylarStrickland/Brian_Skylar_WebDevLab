@@ -68,7 +68,7 @@ else:
 
 # Specialized Content Generation
 if selected_character:
-    st.subheader("Generate a Character Biography")
+    st.subheader("Character Biography")
     try:
         model = genai.GenerativeModel("gemini-1.5-flash")
         char_data = aDict[selected_character]
