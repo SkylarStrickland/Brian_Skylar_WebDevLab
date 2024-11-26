@@ -38,7 +38,7 @@ experience_data = {
 
 projects_data = {
     "Duchenne Muscular Dystrophy Hand Gadget": "Created a gadget to build motor skills and hand muscles for those with DMD",
-    "Web Development Lab 03: Created an app that highlights my portfolio, finds suitable Disney characters from movies based on inputs, and takes as input a Disney Show"
+    
 }
 
 programming_data = {
