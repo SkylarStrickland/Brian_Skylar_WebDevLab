@@ -28,11 +28,11 @@ course_data = {
     "code":["CS 1301", "MATH 1551", "MATH 1554", "GT 1000", "ENGL 1101"], 
     "names":["Intro to CS", "Differential Calculus", "Linear Algebra", "First-Year Seminar", "English Composition 1"], 
     "semester_taken":["1st", "1st", "1st", "1st", "1st"],
-    "skills":["Coding in python and understanding how to think like a programer", "Taking the derivative of a function", "Understanding and using matricies to understand data", "Understanding Georgia Tech as a first year", "Writing complex essays using rhetorical skills"],
+    "skills":["Coding in python and understanding how to think like a programmer", "Taking the derivative of a function", "Understanding and using matricies to understand data", "Understanding Georgia Tech as a first year", "Writing complex essays using rhetorical skills"],
     }
 experience_data = {
     "Cashier at WNB Factory": (["- Helped customers with their orders",
-                                                                          "- Maintained a clean eating enviornment", "- Restocked Condiments"],"Images/WNB.jpg"),
+    
     
 }
 
