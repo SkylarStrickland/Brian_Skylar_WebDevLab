@@ -21,10 +21,10 @@ st.subheader("Bryan Tejano, Skylar Strickland")
 st.write("""
 Welcome to our Streamlit Web Development Lab03 app! You can navigate between the pages using the sidebar to the left. The following pages are:
 
-1.
-2.
-3.
-4.
+1. Brian Portfolio
+2. Skylar Portfolio
+3. Suitable Disney Character
+4. Disney Show Character Explorer
 
 """)
 
