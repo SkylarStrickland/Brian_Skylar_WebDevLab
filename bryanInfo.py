@@ -2,7 +2,7 @@
 #This File will contain the information to be displayed in your portfolio
 
 #CHANGE BELOW
-profile_picture = "Images/profile.jpeg"
+profile_picture = "Images/bryanProfile.jpeg"
 about_me = "My name is Bryan Tejano, a first year Physics major at Georgia Tech. I am super passionate about astrophysics and computational physics!"
 
 
