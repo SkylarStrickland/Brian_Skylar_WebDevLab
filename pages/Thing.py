@@ -10,7 +10,11 @@ model = genai.GenerativeModel("gemini-1.5-flash")
 st.write("Write down a character!")
 character = st.text_input("") # NEW 
 response = model.generate_content(f"give me background of {character}")
-st.write(response.text)
+
+if character == "":
+  st.write("")
+else:
+  st.write(response.text)
 
 
 
