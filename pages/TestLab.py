@@ -47,6 +47,7 @@ if movie_filter:
     fetch_and_filter_characters()
     if not aDict:
         st.write("No characters match your filters. Try adjusting them.")
+        selected_character = None
     else:
         selected_character = st.selectbox("Select a character to explore:", list(aDict.keys()))
         if selected_character:
@@ -61,10 +62,13 @@ if movie_filter:
             st.write("### Enemies")
             st.write(", ".join(char_data["enemies"]) or "None")
             st.write("---")
+else:
+    st.write("Enter a movie to start filtering.")
+    selected_character = None
 
 # Specialized Content Generation
-st.subheader("Generate a Character Biography")
 if selected_character:
+    st.subheader("Generate a Character Biography")
     try:
         model = genai.GenerativeModel("gemini-1.5-flash")
         char_data = aDict[selected_character]
@@ -78,17 +82,18 @@ if selected_character:
         st.error(f"Error generating biography: {e}")
 
 # Chatbot Interaction
-st.subheader("Chatbot Interaction")
-query = st.text_input("Ask a question about the character:")
-if query and selected_character:
-    try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        char_data = aDict[selected_character]
-        prompt = (
-            f"Answer the following question about the Disney character {selected_character}: {query}. "
-            f"Use their films, TV shows, allies, and enemies for context: {char_data}."
-        )
-        chatbot_response = model.generate_content(prompt)
-        st.write(chatbot_response.text)
-    except Exception as e:
-        st.error(f"Error in chatbot response: {e}")
+if selected_character:
+    st.subheader("Chatbot Interaction")
+    query = st.text_input("Ask a question about the character:")
+    if query:
+        try:
+            model = genai.GenerativeModel("gemini-1.5-flash")
+            char_data = aDict[selected_character]
+            prompt = (
+                f"Answer the following question about the Disney character {selected_character}: {query}. "
+                f"Use their films, TV shows, allies, and enemies for context: {char_data}."
+            )
+            chatbot_response = model.generate_content(prompt)
+            st.write(chatbot_response.text)
+        except Exception as e:
+            st.error(f"Error in chatbot response: {e}")
