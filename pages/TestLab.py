@@ -8,9 +8,9 @@ DISNEY_API_URL = "https://api.disneyapi.dev/character"
 
 # Sidebar Inputs
 st.sidebar.title("Filter Your Disney Character")
-movie_filter = st.sidebar.text_input("Enter your favorite Disney movie:")
-num_films = st.sidebar.slider("Minimum number of films:", 1, 10, 1)
-has_enemies = st.sidebar.radio("Does the character have enemies?", ["No", "Yes"])
+tv_show_filter = st.sidebar.text_input("Enter a Disney TV show:")
+num_video_games = st.sidebar.slider("Minimum number of video games appearances:", 0, 10, 0)
+has_park_attractions = st.sidebar.radio("Is the character featured in park attractions?", ["No", "Yes"])
 
 # Header
 st.title("Disney Character Explorer")
@@ -20,30 +20,28 @@ st.write("---")
 aDict = {}
 def fetch_and_filter_characters():
     try:
-        response = r.get(f"{DISNEY_API_URL}?films={movie_filter.replace(' ', '%20')}").json()
+        response = r.get(f"{DISNEY_API_URL}?tvShows={tv_show_filter.replace(' ', '%20')}").json()
         for char in response["data"]:
-            num_films_appearances = len(char.get("films", []))
-            has_enemies_check = len(char.get("enemies", [])) > 0
+            num_video_game_appearances = len(char.get("videoGames", []))
+            in_park_attractions = len(char.get("parkAttractions", [])) > 0
 
-            if has_enemies == "No" and not has_enemies_check and num_films_appearances >= num_films:
+            if has_park_attractions == "No" and not in_park_attractions and num_video_game_appearances >= num_video_games:
                 aDict[char["name"]] = {
-                    "films": char["films"],
                     "tvShows": char["tvShows"],
-                    "allies": char["allies"],
-                    "enemies": char["enemies"]
+                    "videoGames": char["videoGames"],
+                    "parkAttractions": char["parkAttractions"]
                 }
-            elif has_enemies == "Yes" and has_enemies_check and num_films_appearances >= num_films:
+            elif has_park_attractions == "Yes" and in_park_attractions and num_video_game_appearances >= num_video_games:
                 aDict[char["name"]] = {
-                    "films": char["films"],
                     "tvShows": char["tvShows"],
-                    "allies": char["allies"],
-                    "enemies": char["enemies"]
+                    "videoGames": char["videoGames"],
+                    "parkAttractions": char["parkAttractions"]
                 }
     except Exception as e:
         st.error(f"Failed to fetch data: {e}")
 
 # Display Data
-if movie_filter:
+if tv_show_filter:
     fetch_and_filter_characters()
     if not aDict:
         st.write("No characters match your filters. Try adjusting them.")
@@ -53,28 +51,26 @@ if movie_filter:
         if selected_character:
             char_data = aDict[selected_character]
             st.subheader(f"Character: {selected_character}")
-            st.write("### Films")
-            st.write(", ".join(char_data["films"]) or "None")
             st.write("### TV Shows")
             st.write(", ".join(char_data["tvShows"]) or "None")
-            st.write("### Allies")
-            st.write(", ".join(char_data["allies"]) or "None")
-            st.write("### Enemies")
-            st.write(", ".join(char_data["enemies"]) or "None")
+            st.write("### Video Games")
+            st.write(", ".join(char_data["videoGames"]) or "None")
+            st.write("### Park Attractions")
+            st.write(", ".join(char_data["parkAttractions"]) or "None")
             st.write("---")
 else:
-    st.write("Enter a movie to start filtering.")
+    st.write("Enter a TV show to start filtering.")
     selected_character = None
 
 # Specialized Content Generation
 if selected_character:
-    st.subheader("Character Biography")
+    st.subheader("Generate a Character Biography")
     try:
         model = genai.GenerativeModel("gemini-1.5-flash")
         char_data = aDict[selected_character]
         prompt = (
             f"Write a detailed biography for the Disney character {selected_character}, "
-            f"based on their films, TV shows, allies, and enemies: {char_data}."
+            f"based on their TV shows, video games, and park attractions: {char_data}."
         )
         response = model.generate_content(prompt)
         st.write(response.text)
@@ -91,9 +87,10 @@ if selected_character:
             char_data = aDict[selected_character]
             prompt = (
                 f"Answer the following question about the Disney character {selected_character}: {query}. "
-                f"Use their films, TV shows, allies, and enemies for context: {char_data}."
+                f"Use their TV shows, video games, and park attractions for context: {char_data}."
             )
             chatbot_response = model.generate_content(prompt)
             st.write(chatbot_response.text)
         except Exception as e:
             st.error(f"Error in chatbot response: {e}")
+
