@@ -8,7 +8,7 @@ genai.configure(api_key="AIzaSyB45quDtyWzRw_ErsU-fxsv_kmytrHLyNM")
 
 model = genai.GenerativeModel("gemini-1.5-flash")
 st.write("Write down a character!")
-character = st.text_input("WHat is your favorite character?") # NEW 
+character = st.text_input() # NEW 
 response = model.generate_content(f"give me background of {character}")
 st.write(response.text)
 
