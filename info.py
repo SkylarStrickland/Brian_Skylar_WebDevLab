@@ -31,7 +31,7 @@ course_data = {
     "skills":["Coding in python and understanding how to think like a programmer", "Taking the derivative of a function", "Understanding and using matricies to understand data", "Understanding Georgia Tech as a first year", "Writing complex essays using rhetorical skills"],
     }
 experience_data = {
-    "Cashier at WNB Factory": (["- Helped customers with their orders",
+    "Cashier at WNB Factory": (["- Helped customers with their orders"]
     
     
 }
