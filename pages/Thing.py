@@ -25,7 +25,7 @@ def fetch_disney_characters(page=1, page_size=10):
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
-        return {"error": f"Failed to fetch data: {e}"}
+        return {"error": f"Failed to fetch dat: {e}"}
 
 def get_character_details(name):
     data = fetch_disney_characters()
