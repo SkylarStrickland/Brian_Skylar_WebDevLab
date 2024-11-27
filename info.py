@@ -38,7 +38,7 @@ experience_data = {
 
 projects_data = {
     "Duchenne Muscular Dystrophy Hand Gadget": "Created a gadget to build motor skills and hand muscles for those with DMD",
-    "Web Development Lab 03": "Created an app that shows my and my partner's portfolios, finds a Disney character based on user inputs, and takes in a Disney show to allow users to pick a character from the show and ask any questions about it via a chat"
+    "Web Development Lab 03": "Created an app that shows my and my partner's portfolios, finds a Disney character based on user inputs, and takes in a Disney show to allow users to pick a character from the show and ask any questions about it via a chatbot while also providing a description of the chosen character"
 }
 
 programming_data = {
